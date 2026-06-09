@@ -1,0 +1,262 @@
+
+============================================================
+POSTRATAMIENTO 1 (2017–2019) — Modelo base 
+Muestra: 2010–2019 
+Efectos fijos: ccaa + year
+Errores estándar: cluster por ccaa
+
+Especificación (R / fixest):
+empleo_juvenil ~ tratado:post1 | ccaa + year
+
+
+Salida summary():
+OLS estimation, Dep. Var.: empleo_juvenil
+Observations: 170
+Fixed-effects: ccaa: 17,  year: 10
+Standard-errors: Clustered (ccaa) 
+               Estimate Std. Error   t value Pr(>|t|) 
+tratado:post1 -0.135265   0.871813 -0.155153  0.87864 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+RMSE: 1.41968     Adj. R2: 0.875225
+                Within R2: 4.747e-4
+
+Estadísticos adicionales:
+AIC: 655.59
+F global (Wald): NA
+p-valor (Wald): NA
+
+
+============================================================
+POSTRATAMIENTO 1 (2017–2019) — Controles especificos 
+Muestra: 2010–2019 
+Efectos fijos: ccaa + year
+Errores estándar: cluster por ccaa
+
+Especificación (R / fixest):
+empleo_juvenil ~ tratado:post1 + pib_per_capita + coste_laboral_medio + 
+    agricultura_pct + industria_pct + construccion_pct + poblacion_joven_15_24 | 
+    ccaa + year
+
+
+Salida summary():
+OLS estimation, Dep. Var.: empleo_juvenil
+Observations: 170
+Fixed-effects: ccaa: 17,  year: 10
+Standard-errors: Clustered (ccaa) 
+                       Estimate Std. Error   t value Pr(>|t|) 
+pib_per_capita         0.000597   0.000512  1.165486  0.26090 
+coste_laboral_medio   -0.004584   0.004175 -1.097919  0.28849 
+agricultura_pct       -0.464508   0.328601 -1.413595  0.17664 
+industria_pct          0.108075   0.204187  0.529293  0.60387 
+construccion_pct      -0.075069   0.249643 -0.300707  0.76751 
+poblacion_joven_15_24  0.000022   0.000016  1.405781  0.17891 
+tratado:post1          0.545548   0.955208  0.571130  0.57585 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+RMSE: 1.35364     Adj. R2: 0.881597
+                Within R2: 0.091313
+
+Estadísticos adicionales:
+AIC: 651.39
+F global (Wald): NA
+p-valor (Wald): NA
+
+
+============================================================
+POSTRATAMIENTO 2 (2020–2023) — Modelo base 
+Muestra: 2010–2023 
+Efectos fijos: ccaa + year
+Errores estándar: cluster por ccaa
+
+Especificación (R / fixest):
+empleo_juvenil ~ tratado:post2 | ccaa + year
+
+
+Salida summary():
+OLS estimation, Dep. Var.: empleo_juvenil
+Observations: 238
+Fixed-effects: ccaa: 17,  year: 14
+Standard-errors: Clustered (ccaa) 
+              Estimate Std. Error  t value Pr(>|t|)    
+tratado:post2 -1.40572   0.684573 -2.05342 0.056754 .  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+RMSE: 1.58496     Adj. R2: 0.856935
+                Within R2: 0.038456
+
+Estadísticos adicionales:
+AIC: 956.64
+F global (Wald): NA
+p-valor (Wald): NA
+
+
+============================================================
+POSTRATAMIENTO 2 (2020–2023) — Controles (Sin variable poblacional) 
+Muestra: 2010–2023 
+Efectos fijos: ccaa + year
+Errores estándar: cluster por ccaa
+
+Especificación (R / fixest):
+empleo_juvenil ~ tratado:post2 + pib_per_capita + coste_laboral_medio + 
+    agricultura_pct + industria_pct + construccion_pct | ccaa + 
+    year
+
+
+Salida summary():
+OLS estimation, Dep. Var.: empleo_juvenil
+Observations: 238
+Fixed-effects: ccaa: 17,  year: 14
+Standard-errors: Clustered (ccaa) 
+                     Estimate Std. Error   t value Pr(>|t|)    
+pib_per_capita       0.000665   0.000309  2.149346 0.047252 *  
+coste_laboral_medio -0.000399   0.003926 -0.101558 0.920369    
+agricultura_pct     -0.352399   0.246739 -1.428224 0.172457    
+industria_pct       -0.009123   0.152948 -0.059649 0.953174    
+construccion_pct    -0.249075   0.288177 -0.864312 0.400189    
+tratado:post2       -0.938241   0.768691 -1.220571 0.239932    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+RMSE: 1.52471     Adj. R2: 0.864327
+                Within R2: 0.110166
+
+Estadísticos adicionales:
+AIC: 948.19
+F global (Wald): NA
+p-valor (Wald): NA
+
+
+============================================================
+POSTRATAMIENTO 2 (2020–2023) — Controles (Con variable poblacional) 
+Muestra: 2010–2022 
+Efectos fijos: ccaa + year
+Errores estándar: cluster por ccaa
+
+Especificación (R / fixest):
+empleo_juvenil ~ tratado:post2 + pib_per_capita + coste_laboral_medio + 
+    agricultura_pct + industria_pct + construccion_pct + poblacion_joven_15_24 | 
+    ccaa + year
+
+
+Salida summary():
+OLS estimation, Dep. Var.: empleo_juvenil
+Observations: 221
+Fixed-effects: ccaa: 17,  year: 13
+Standard-errors: Clustered (ccaa) 
+                       Estimate Std. Error   t value  Pr(>|t|)    
+pib_per_capita         0.001010   0.000313  3.230564 0.0052306 ** 
+coste_laboral_medio   -0.003685   0.003876 -0.950794 0.3558518    
+agricultura_pct       -0.308463   0.285814 -1.079245 0.2964799    
+industria_pct          0.147028   0.150068  0.979745 0.3417952    
+construccion_pct      -0.278645   0.250201 -1.113683 0.2818665    
+poblacion_joven_15_24  0.000017   0.000012  1.436903 0.1700126    
+tratado:post2         -0.827167   0.727169 -1.137517 0.2720707    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+RMSE: 1.43888     Adj. R2: 0.87397 
+                Within R2: 0.196203
+
+Estadísticos adicionales:
+AIC: 860.00
+F global (Wald): NA
+p-valor (Wald): NA
+
+
+============================================================
+POST AGREGADO (2017–2023) — Modelo base 
+Muestra: 2010–2023 
+Efectos fijos: ccaa + year
+Errores estándar: cluster por ccaa
+
+Especificación (R / fixest):
+empleo_juvenil ~ tratado:post_all | ccaa + year
+
+
+Salida summary():
+OLS estimation, Dep. Var.: empleo_juvenil
+Observations: 238
+Fixed-effects: ccaa: 17,  year: 14
+Standard-errors: Clustered (ccaa) 
+                  Estimate Std. Error t value Pr(>|t|) 
+tratado:post_all -0.884425   0.778677 -1.1358  0.27277 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+RMSE: 1.6012     Adj. R2: 0.853988
+               Within R2: 0.018648
+
+Estadísticos adicionales:
+AIC: 961.49
+F global (Wald): NA
+p-valor (Wald): NA
+
+
+============================================================
+POST AGREGADO (2017–2023) — Controles especificos 
+Muestra: 2010–2023 
+Efectos fijos: ccaa + year
+Errores estándar: cluster por ccaa
+
+Especificación (R / fixest):
+empleo_juvenil ~ tratado:post_all + pib_per_capita + coste_laboral_medio + 
+    agricultura_pct + industria_pct + construccion_pct | ccaa + 
+    year
+
+
+Salida summary():
+OLS estimation, Dep. Var.: empleo_juvenil
+Observations: 238
+Fixed-effects: ccaa: 17,  year: 14
+Standard-errors: Clustered (ccaa) 
+                     Estimate Std. Error   t value Pr(>|t|)    
+pib_per_capita       0.000710   0.000318  2.231350 0.040314 *  
+coste_laboral_medio  0.000476   0.004444  0.107162 0.915993    
+agricultura_pct     -0.287686   0.267743 -1.074484 0.298543    
+industria_pct        0.024886   0.147487  0.168732 0.868122    
+construccion_pct    -0.239874   0.289127 -0.829650 0.418944    
+tratado:post_all    -0.252713   1.019138 -0.247967 0.807314    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+RMSE: 1.53548     Adj. R2: 0.862403
+                Within R2: 0.097547
+
+Estadísticos adicionales:
+AIC: 951.55
+F global (Wald): NA
+p-valor (Wald): NA
+
+
+============================================================
+POST AGREGADO (2017–2023) — Controles (Con variable poblacional) 
+Muestra: 2010–2022 
+Efectos fijos: ccaa + year
+Errores estándar: cluster por ccaa
+
+Especificación (R / fixest):
+empleo_juvenil ~ tratado:post_all + pib_per_capita + coste_laboral_medio + 
+    agricultura_pct + industria_pct + construccion_pct + poblacion_joven_15_24 | 
+    ccaa + year
+
+
+Salida summary():
+OLS estimation, Dep. Var.: empleo_juvenil
+Observations: 221
+Fixed-effects: ccaa: 17,  year: 13
+Standard-errors: Clustered (ccaa) 
+                       Estimate Std. Error   t value  Pr(>|t|)    
+pib_per_capita         0.001068   0.000322  3.315062 0.0043781 ** 
+coste_laboral_medio   -0.002451   0.004681 -0.523554 0.6077650    
+agricultura_pct       -0.254725   0.294973 -0.863553 0.4005940    
+industria_pct          0.189325   0.136393  1.388091 0.1841357    
+construccion_pct      -0.282885   0.266389 -1.061927 0.3040356    
+poblacion_joven_15_24  0.000022   0.000012  1.843478 0.0838615 .  
+tratado:post_all       0.257465   0.965206  0.266747 0.7930716    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+RMSE: 1.44592     Adj. R2: 0.872734
+                Within R2: 0.188322
+
+Estadísticos adicionales:
+AIC: 862.16
+F global (Wald): NA
+p-valor (Wald): NA
+
