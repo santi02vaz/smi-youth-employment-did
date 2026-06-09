@@ -1,7 +1,5 @@
 # smi-youth-employment-did
 R code and data panels for my Bachelor's Thesis (TFG): "Impact of the SMI increase on youth employment: an approach in Spain based on average per capita income" using a Difference-in-Differences (DiD) framework with regional fixed effects.
-# smi-youth-employment-did
-R code and data panels for my Bachelor's Thesis (TFG): "Impact of the SMI increase on youth employment: an approach in Spain based on average per capita income" using a Difference-in-Differences (DiD) framework with regional fixed effects.
 # Impact of the SMI Increase on Youth Employment in Spain (2010-2023)
 
 This repository contains the econometric code, datasets, and the full text of my Bachelor's Thesis (*Trabajo de Fin de Grado* - TFG) in Economics at the **Universitat de Barcelona (UB)**.
