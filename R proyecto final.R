@@ -1,0 +1,154 @@
+################################################################################
+# TFG: Análisis del Impacto del SMI en el Empleo Juvenil en España (2010-2023)
+# METODOLOGÍA: Enfoque de Diferencias en Diferencias (DiD) con Efectos Fijos
+################################################################################
+
+# 0) Carga de librerías esenciales
+library(readxl)
+library(dplyr)
+library(fixest)
+
+# 1) Configuración del directorio de trabajo
+setwd("C:/Users/santi/OneDrive/Dokumente/Datos_TFG")
+
+# 2) Importación de fuentes de datos (Panel por CCAA)
+empleo <- read_excel("empleo_juvenil_2010_2023_por_ccaa_sin_ceuta_melilla.xlsx")
+pibpc  <- read_excel("pib_per_capita_2010_2023_por_ccaa_sin_ceuta_melilla.xlsx")
+coste  <- read_excel("coste_laboral_medio_2010_2023_por_ccaa_COMPLETO.xlsx")
+sector <- read_excel("estructura_sectorial_2010_2023_por_ccaa_COMPLETO.xlsx")
+pob    <- read_excel("poblacion_joven_15_24_anual_2010_2023_por_ccaa.xlsx")
+
+# 3) Consolidación del panel de datos
+df <- empleo %>%
+  left_join(pibpc,  by = c("ccaa","year")) %>%
+  left_join(coste,  by = c("ccaa","year")) %>%
+  left_join(sector, by = c("ccaa","year")) %>%
+  left_join(pob,    by = c("ccaa","year"))
+
+# 4) Validación de la consistencia del panel
+stopifnot(nrow(df) > 0)
+df %>% summarise(
+  N_Observaciones = n(),
+  N_CCAA = n_distinct(ccaa),
+  Periodo_Inicio = min(year),
+  Periodo_Fin = max(year)
+)
+
+# 5) Definición del grupo de tratamiento y ventanas temporales (Post)
+tratadas <- c(
+  "Extremadura","Canarias","Castilla - La Mancha","Galicia","Comunitat Valenciana",
+  "Murcia, Región De","Andalucía","Balears, Illes","Castilla Y León"
+)
+
+df <- df %>%
+  mutate(
+    tratado  = if_else(ccaa %in% tratadas, 1, 0),
+    post1    = if_else(year >= 2017 & year <= 2019, 1, 0),
+    post2    = if_else(year >= 2020 & year <= 2023, 1, 0),
+    post_all = if_else(year >= 2017 & year <= 2023, 1, 0)
+  )
+
+# 6) Construcción de submuestras para análisis de robustez
+df_post1         <- df %>% filter(year >= 2010 & year <= 2019)
+df_post2         <- df %>% filter(year >= 2010 & year <= 2023)
+df_post2_2022    <- df %>% filter(year >= 2010 & year <= 2022)
+df_post_all      <- df %>% filter(year >= 2010 & year <= 2023)
+df_post_all_2022 <- df %>% filter(year >= 2010 & year <= 2022)
+
+
+# 7) Estimación de Modelos Econométricos
+
+## --- Ventana Temporal 1: Periodo 2017–2019 ---
+m1_base <- feols(
+  empleo_juvenil ~ tratado:post1 | ccaa + year,
+  data = df_post1, cluster = ~ccaa
+)
+
+m1_ctrl_noact <- feols(
+  empleo_juvenil ~ tratado:post1 + pib_per_capita + coste_laboral_medio +
+    agricultura_pct + industria_pct + construccion_pct + poblacion_joven_15_24 | ccaa + year,
+  data = df_post1, cluster = ~ccaa
+)
+
+## --- Ventana Temporal 2: Periodo 2020–2023 ---
+m2_base <- feols(
+  empleo_juvenil ~ tratado:post2 | ccaa + year,
+  data = df_post2, cluster = ~ccaa
+)
+
+m2_ctrl_noact_nopob <- feols(
+  empleo_juvenil ~ tratado:post2 + pib_per_capita + coste_laboral_medio +
+    agricultura_pct + industria_pct + construccion_pct | ccaa + year,
+  data = df_post2, cluster = ~ccaa
+)
+
+m2_ctrl_noact_pob <- feols(
+  empleo_juvenil ~ tratado:post2 + pib_per_capita + coste_laboral_medio +
+    agricultura_pct + industria_pct + construccion_pct + poblacion_joven_15_24 | ccaa + year,
+  data = df_post2_2022, cluster = ~ccaa
+)
+
+## --- Ventana Agregada: Periodo 2017–2023 ---
+m_all_base <- feols(
+  empleo_juvenil ~ tratado:post_all | ccaa + year,
+  data = df_post_all, cluster = ~ccaa
+)
+
+m_all_ctrl <- feols(
+  empleo_juvenil ~ tratado:post_all + pib_per_capita + coste_laboral_medio +
+    agricultura_pct + industria_pct + construccion_pct | ccaa + year,
+  data = df_post_all, cluster = ~ccaa
+)
+
+m_all_ctrl_pob <- feols(
+  empleo_juvenil ~ tratado:post_all + pib_per_capita + coste_laboral_medio +
+    agricultura_pct + industria_pct + construccion_pct + poblacion_joven_15_24 | ccaa + year,
+  data = df_post_all_2022, cluster = ~ccaa
+)
+
+
+# 8) Extracción de estadísticos de diagnóstico (AIC, F-Wald)
+extra_stats <- function(m){
+  w <- fitstat(m, "wald")
+  c(AIC = AIC(m), F_wald = unname(w$stat), p_wald = unname(w$p))
+}
+
+# 9) Función de exportación de resultados a formato plano (.txt)
+write_model_block <- function(con, title, model, data_range) {
+  
+  cat("\n============================================================\n", file = con, append = TRUE)
+  cat(title, "\n", file = con, append = TRUE)
+  cat("Muestra:", data_range, "\n", file = con, append = TRUE)
+  cat("Efectos fijos: ccaa + year\n", file = con, append = TRUE)
+  cat("Errores estándar: cluster por ccaa\n\n", file = con, append = TRUE)
+  
+  cat("Especificación (R / fixest):\n", file = con, append = TRUE)
+  cat(deparse(formula(model)), sep = "\n", file = con, append = TRUE)
+  
+  cat("\n\nSalida summary():\n", file = con, append = TRUE)
+  capture.output(summary(model), file = con, append = TRUE)
+  
+  st <- extra_stats(model)
+  cat("\nEstadísticos adicionales:\n", file = con, append = TRUE)
+  cat(sprintf("AIC: %.2f\n", st["AIC"]), file = con, append = TRUE)
+  cat(sprintf("F global (Wald): %.3f\n", st["F_wald"]), file = con, append = TRUE)
+  cat(sprintf("p-valor (Wald): %.4f\n", st["p_wald"]), file = con, append = TRUE)
+  
+  cat("\n", file = con, append = TRUE)
+}
+
+out_file <- "Resultados_DiD_Modelos_SMI.txt"
+if (file.exists(out_file)) file.remove(out_file)
+file.create(out_file)
+
+write_model_block(out_file, "POSTRATAMIENTO 1 (2017–2019) — Modelo base", m1_base, "2010–2019")
+write_model_block(out_file, "POSTRATAMIENTO 1 (2017–2019) — Controles especificos", m1_ctrl_noact, "2010–2019")
+write_model_block(out_file, "POSTRATAMIENTO 2 (2020–2023) — Modelo base", m2_base, "2010–2023")
+write_model_block(out_file, "POSTRATAMIENTO 2 (2020–2023) — Controles (Sin variable poblacional)", m2_ctrl_noact_nopob, "2010–2023")
+write_model_block(out_file, "POSTRATAMIENTO 2 (2020–2023) — Controles (Con variable poblacional)", m2_ctrl_noact_pob, "2010–2022")
+write_model_block(out_file, "POST AGREGADO (2017–2023) — Modelo base", m_all_base, "2010–2023")
+write_model_block(out_file, "POST AGREGADO (2017–2023) — Controles especificos", m_all_ctrl, "2010–2023")
+write_model_block(out_file, "POST AGREGADO (2017–2023) — Controles (Con variable poblacional)", m_all_ctrl_pob, "2010–2022")
+
+# 10) Visualización automática del reporte generado
+shell.exec(out_file)
